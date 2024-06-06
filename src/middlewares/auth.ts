@@ -15,6 +15,8 @@ const auth = (req: any, res: Response, next: NextFunction) => {
 
     req.user = user
 
+    next()
+
 }
 
 export default auth
