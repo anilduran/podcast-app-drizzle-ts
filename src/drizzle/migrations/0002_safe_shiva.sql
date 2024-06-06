@@ -1,0 +1,1 @@
+ALTER TABLE "podcast_likes" ADD CONSTRAINT "podcast_likes_user_id_podcast_id_pk" PRIMARY KEY("user_id","podcast_id");

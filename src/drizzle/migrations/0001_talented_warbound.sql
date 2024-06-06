@@ -1,0 +1,1 @@
+ALTER TABLE "playlists" ADD COLUMN "image_url" varchar NOT NULL;
