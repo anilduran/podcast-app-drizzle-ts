@@ -24,6 +24,6 @@ router.post('/:id/comments', auth, PodcastsController.createComment)
 
 router.patch('/:id/comments/:commentId', auth, PodcastsController.updateComment)
 
-router.delete('/:id/comments/:podcastId', auth, PodcastsController.deleteComment)
+router.delete('/:id/comments/:commentId', auth, PodcastsController.deleteComment)
 
 export default router

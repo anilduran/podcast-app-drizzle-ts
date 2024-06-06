@@ -16,4 +16,6 @@ router.get('/podcasts', auth, MeController.getMyPodcasts)
 
 router.get('/listening-history', auth, MeController.getMyListeningHistory)
 
+router.get('/subscriptions', auth, MeController.getMySubscriptions)
+
 export default router

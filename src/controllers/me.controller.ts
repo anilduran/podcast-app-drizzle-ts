@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import db from "../drizzle/db";
 import { eq } from "drizzle-orm";
-import { playlists,  podcastLists, podcasts, users } from "../drizzle/schema";
+import { listeningHistory, playlists,  podcastListSubscriptions,  podcastLists, podcasts, users } from "../drizzle/schema";
 
 export default class MeController {
  
@@ -63,6 +63,32 @@ export default class MeController {
 
     static async getMyListeningHistory(req: any, res: Response, next: NextFunction) {
         try {
+
+            const history = await db.query.listeningHistory.findMany({
+                where: eq(listeningHistory.userId, req.user.id),
+                with: {
+                    podcast: true
+                }
+            })
+
+            res.status(200).json(history)
+
+        } catch(error) {
+            next(error)
+        }
+    }
+
+    static async getMySubscriptions(req: any, res: Response, next: NextFunction) {
+        try {
+
+            const subscriptions = await db.query.podcastListSubscriptions.findMany({
+                where: eq(podcastListSubscriptions.userId, req.user.id),
+                with: {
+                    podcastList: true
+                }
+            })
+
+            res.status(200).json(subscriptions)
 
         } catch(error) {
             next(error)

@@ -135,6 +135,10 @@ export const podcastListCommentsRelations = relations(podcastListComments, ({ on
     user: one(users, {
         fields: [podcastListComments.userId],
         references: [users.id]
+    }),
+    podcastList: one(podcastLists, {
+        fields: [podcastListComments.podcastListId],
+        references: [podcastLists.id]
     })
 }))
 
@@ -151,6 +155,10 @@ export const podcastCommentsRelations = relations(podcastComments, ({ one }) => 
     user: one(users, {
         fields: [podcastComments.userId],
         references: [users.id]
+    }),
+    podcast: one(podcasts, {
+        fields: [podcastComments.podcastId],
+        references: [podcasts.id]
     })
 }))
 
@@ -163,6 +171,31 @@ export const playlists = pgTable('playlists', {
     createdAt: timestamp('created_at').defaultNow(),
     updatedAt: timestamp('updated_at').defaultNow()
 })
+
+export const playlistRelations = relations(playlists, ({ one }) => ({
+    creator: one(users, {
+        fields: [playlists.creatorId],
+        references: [users.id]
+    })
+}))
+
+export const playlistPodcasts = pgTable('playlist_podcasts', {
+    playlistId: uuid('playlist_id').references(() => playlists.id),
+    podcastId: uuid('podcast_id').references(() => podcasts.id)
+}, (t) => ({
+    pk: primaryKey({ columns: [t.playlistId, t.podcastId] })
+}))
+
+export const playlistPodcastsRelations = relations(playlistPodcasts, ({ one }) => ({
+    podcast: one(podcasts, {
+        fields: [playlistPodcasts.podcastId],
+        references: [podcasts.id]
+    }),
+    playlist: one(playlists, {
+        fields: [playlistPodcasts.playlistId],
+        references: [playlists.id]
+    })
+}))
 
 export const podcastListSubscriptions = pgTable('podcast_list_subscriptions', {
     podcastListId: uuid('podcast_list_id').references(() => podcastLists.id),

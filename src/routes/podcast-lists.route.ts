@@ -28,4 +28,8 @@ router.patch('/:id/comments/:commentId', auth, PodcastListsController.updateComm
 
 router.delete('/:id/comments/:commentId', auth, PodcastListsController.deleteComment)
 
+router.post('/:id/subscribe', auth, PodcastListsController.subscribePodcastList)
+
+router.post('/:id/unsubscribe', auth, PodcastListsController.unsubscribePodcastList)
+
 export default router

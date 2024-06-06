@@ -16,4 +16,9 @@ router.delete('/:id', auth, PlaylistsController.deletePlaylist)
 
 router.get('/:id/podcasts', auth, PlaylistsController.getPodcasts)
 
+router.post('/:id/podcasts/:podcastId', auth, PlaylistsController.addPodcastToPlaylist)
+
+router.delete('/:id/podcasts/:podcastId', auth, PlaylistsController.removePodcastFromPlaylist)
+
+
 export default router

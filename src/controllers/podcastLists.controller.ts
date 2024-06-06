@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import db from "../drizzle/db";
 import { and, eq } from "drizzle-orm";
-import { podcastListComments, podcastListPodcasts, podcastLists, podcasts } from "../drizzle/schema";
+import { podcastListComments, podcastListPodcasts, podcastListSubscriptions, podcastLists, podcasts } from "../drizzle/schema";
 import { z } from "zod";
 
 export default class PodcastListsController {
@@ -197,7 +197,42 @@ export default class PodcastListsController {
         }
     }
 
+    static async subscribePodcastList(req: any, res: Response, next: NextFunction) {
+        try {
 
+            const result = await db.insert(podcastListSubscriptions).values({
+                podcastListId: req.params.id,
+                userId: req.user.id
+            }).returning()
+
+            const podcastList = await db.query.podcastLists.findFirst({
+                where: eq(podcastLists.id, result[0].podcastListId!)
+            })
+
+            res.status(201).json(podcastList)
+
+        } catch(error) {
+            next(error)
+        }
+    }
+
+    static async unsubscribePodcastList(req: any, res: Response, next: NextFunction) {
+        try {
+
+            const result = await db.delete(podcastListSubscriptions).where(
+                and(eq(podcastListSubscriptions.podcastListId, req.params.id), eq(podcastListSubscriptions.userId, req.user.id))
+            ).returning()
+
+            const podcastList = await db.query.podcastLists.findFirst({
+                where: eq(podcastLists.id, result[0].podcastListId!)
+            })
+
+            res.status(200).json(podcastList)
+
+        } catch(error) {
+            next(error)
+        }
+    }
 
 
 }

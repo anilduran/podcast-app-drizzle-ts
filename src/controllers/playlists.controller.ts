@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import db from "../drizzle/db";
-import { eq } from "drizzle-orm";
-import { playlists } from "../drizzle/schema";
+import { and, eq } from "drizzle-orm";
+import { playlistPodcasts, playlists, podcasts } from "../drizzle/schema";
 
 export default class PlaylistsController {
 
@@ -76,6 +76,52 @@ export default class PlaylistsController {
 
     static async getPodcasts(req: any, res: Response, next: NextFunction) {
         try {
+
+            const podcasts = await db.query.playlistPodcasts.findMany({
+                where: eq(playlistPodcasts.playlistId, req.params.id),
+                with: {
+                    podcast: true
+                }
+            })
+
+            res.status(200).json(podcasts)
+
+        } catch(error) {
+            next(error)
+        }
+    }
+
+    static async addPodcastToPlaylist(req: any, res: Response, next: NextFunction) {
+        try {
+
+            const result = await db.insert(playlistPodcasts).values({
+                playlistId: req.params.id,
+                podcastId: req.params.podcastId
+            }).returning()
+
+            const podcast = await db.query.podcasts.findFirst({
+                where: eq(podcasts.id, result[0].podcastId!)
+            })
+
+            res.status(201).json(podcast)
+
+        } catch(error) {
+            next(error)
+        }
+    }
+
+    static async removePodcastFromPlaylist(req: any, res: Response, next: NextFunction) {
+        try {
+
+            const result = await db.delete(playlistPodcasts).where(
+                and(eq(playlistPodcasts.playlistId, req.params.id), eq(playlistPodcasts.podcastId, req.params.podcastId))
+            ).returning()
+
+            const podcast = await db.query.podcasts.findFirst({
+                where: eq(podcasts.id, result[0].podcastId!)
+            })
+
+            res.status(200).json(podcast)
 
         } catch(error) {
             next(error)
